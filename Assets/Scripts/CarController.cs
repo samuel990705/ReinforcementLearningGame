@@ -16,7 +16,7 @@ public class CarController : MonoBehaviour
 	public Transform LFTransform, RFTransform;
 	public Transform LRTransform, RRTransform;
 
-	public float maxSteerAngle = 30;//limits how fast car can steer
+	public float maxSteerAngle = 40;//limits how fast car can steer
 	public float motorForce = 500;//force applied when accelerating
 
     private void FixedUpdate()
