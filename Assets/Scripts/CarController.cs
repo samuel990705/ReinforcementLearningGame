@@ -16,10 +16,13 @@ public class CarController : MonoBehaviour
 	public Transform LFTransform, RFTransform;
 	public Transform LRTransform, RRTransform;
 
-	public float maxSteerAngle = 40;//limits how fast car can steer
-	public float motorForce = 500;//force applied when accelerating
+	public float maxSteerAngle = 35;//limits how fast car can steer
+	public float motorForce = 1000;//force applied when accelerating
+	public float brakeTorque = 100000;//force applied when accelerating
+	public float driftingStiffness = 0.75f;//stiffness of rear wheels when brake is held (to allow for drifting)
 
-    private void FixedUpdate()
+
+	private void FixedUpdate()
     {
 		//get input
 		horizontalInput = Input.GetAxis("Horizontal");
@@ -33,6 +36,17 @@ public class CarController : MonoBehaviour
 		//update acceleration (only powers front wheels)
 		LFWheel.motorTorque = motorForce * verticalInput;
 		RFWheel.motorTorque = motorForce * verticalInput;
+
+		//if brake key is held
+		float brake = Input.GetKey(KeyCode.Space) == true ? brakeTorque : 0;
+		LRWheel.brakeTorque = brake;//add brakeTorque to rear wheels
+		RRWheel.brakeTorque = brake;
+
+		float stiffness = Input.GetKey(KeyCode.Space) == true ? driftingStiffness : 1.0f;//1.0f is default stiffness of wheels
+		WheelFrictionCurve sidewaysFriction = LRWheel.sidewaysFriction;
+		sidewaysFriction.stiffness = stiffness;
+		LRWheel.sidewaysFriction = sidewaysFriction;//change stiffness of rear wheels
+		RRWheel.sidewaysFriction = sidewaysFriction;
 
 		//update rotation and position of wheels
 		updateWheelTransform(LFWheel, LFTransform);
